@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #define NUMBER_OF_ATTEMPS 5
 #define INITIAL_SCORE 1000
@@ -44,10 +45,7 @@ int main() {
 		attempt++;
 
 		// compute score
-		if(bigger)
-			score = score + (secretNumber - guess)/2.0;
-		else
-			score = score + (guess - secretNumber)/2.0;
+		score = score - abs(secretNumber - guess)/2.0;
 	}
 
 	printf("Game over!\n");
