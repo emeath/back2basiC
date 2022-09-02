@@ -15,7 +15,7 @@ int main() {
 	int guess;
 	int attempt = 1;
 
-	int score = INITIAL_SCORE;
+	double score = INITIAL_SCORE;
 	while(1) {
 		printf("Attempt %d\n", attempt);
 		printf("What is your guess number? ");
@@ -45,14 +45,14 @@ int main() {
 
 		// compute score
 		if(bigger)
-			score = score + (secretNumber - guess)/2;
+			score = score + (secretNumber - guess)/2.0;
 		else
-			score = score + (guess - secretNumber)/2;
+			score = score + (guess - secretNumber)/2.0;
 	}
 
 	printf("Game over!\n");
 	printf("You won with #%d attempts!\n", attempt);
-	printf("You scored: %d points!\n", score);
+	printf("You scored: %.2f points!\n", score);
 	return 0;
 	
 }
