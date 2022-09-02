@@ -1,6 +1,7 @@
 #include <stdio.h>
 
 #define NUMBER_OF_ATTEMPS 5
+#define INITIAL_SCORE 1000
 
 int main() {
 
@@ -14,6 +15,7 @@ int main() {
 	int guess;
 	int attempt = 1;
 
+	int score = INITIAL_SCORE;
 	while(1) {
 		printf("Attempt %d\n", attempt);
 		printf("What is your guess number? ");
@@ -40,11 +42,17 @@ int main() {
 		}
 
 		attempt++;
+
+		// compute score
+		if(bigger)
+			score = score + (secretNumber - guess)/2;
+		else
+			score = score + (guess - secretNumber)/2;
 	}
 
 	printf("Game over!\n");
 	printf("You won with #%d attempts!\n", attempt);
-	
+	printf("You scored: %d points!\n", score);
 	return 0;
 	
 }
