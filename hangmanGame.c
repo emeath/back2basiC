@@ -7,7 +7,7 @@ void printHeaderBaner() {
 	printf("********************\n\n");
 }
 
-void playerGuesses() {
+void playerGuesses(char guesses[26], int atempts) {
 	char guess;
 	scanf(" %c", &guess); // note that there is a space then char mask.
 	// this is used to ignore 'enter' in the buffer
