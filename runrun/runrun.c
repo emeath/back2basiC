@@ -2,21 +2,19 @@
 #include <stdlib.h>
 #include "runrun.h"
 
-char** map; 
-int lines;
-int columns;
+struct map m;
 
 void freeMapMemory() {
-	for(int i = 0; i < lines; i++) {
-		free(map[i]);
+	for(int i = 0; i < m.lines; i++) {
+		free(m.matrix[i]);
 	}
-	free(map);
+	free(m.matrix);
 }
 
 void alocatesMapMemory() {
-	map = malloc(sizeof(char*) * lines);
-	for(int i = 0; i < lines; i++) {
-		map[i] = malloc(sizeof(char) * (columns + 1)); // +1 -> room for '\0' at the end of string
+	m.matrix = malloc(sizeof(char*) * m.lines);
+	for(int i = 0; i < m.lines; i++) {
+		m.matrix[i] = malloc(sizeof(char) * (m.columns + 1)); // +1 -> room for '\0' at the end of string
 	}
 }
 
@@ -29,25 +27,72 @@ void readsMap() {
 		exit(1);
 	}
 	
-	fscanf(f, "%d %d", &lines, &columns);
+	fscanf(f, "%d %d", &(m.lines), &(m.columns));
 
 	alocatesMapMemory();
 
-	for(int i = 0; i < lines; i++) {
-		fscanf(f, "%s", map[i]);
+	for(int i = 0; i < m.lines; i++) {
+		fscanf(f, "%s", m.matrix[i]);
 	}
 
 	fclose(f);
 }
 
+void printsMap() {
+	for(int i = 0; i < m.lines; i++) {
+		printf("%s\n", m.matrix[i]);
+	}
+}
+
+int gameOver() {
+	return 0;
+}
+
+void move(char direction) {
+	int x;
+	int y;
+
+	for(int i = 0; i < m.lines; i++) {
+		for(int j = 0; j < m.columns; j++) {
+			if(m.matrix[i][j] == '@') {
+				x = i;
+				y = j;
+				break;
+			}
+		}
+	}
+
+	switch(direction) {
+		case 'a': 
+			m.matrix[x][y-1] = '@';
+			break;
+		case 'w':
+			m.matrix[x-1][y] = '@';
+			break;
+		case 's':
+			m.matrix[x+1][y] = '@';
+			break;
+		case 'd':
+			m.matrix[x][y+1] = '@';
+			break;
+	}
+
+	m.matrix[x][y] = '.';
+}
+
 int main() {
 
 	readsMap();
-
-	for(int i = 0; i < lines; i++) {
-		printf("%s\n", map[i]);
-	}
 	
+	do {
+		printsMap();
+
+		char command;
+		scanf(" %c", &command);
+
+		move(command);
+	} while(!gameOver());
+
 	freeMapMemory();
 
 	return 0;
