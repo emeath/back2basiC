@@ -94,9 +94,3 @@ void readsMap(MAP* m) {
 
 	fclose(f);
 }
-
-void printsMap(MAP* m) {
-	for(int i = 0; i < m->lines; i++) {
-		printf("%s\n", m->matrix[i]);
-	}
-}

@@ -3,9 +3,11 @@
 #include <time.h>
 #include "runrun.h"
 #include "map.h"
+#include "ui.h"
 
 MAP m;
 POSITION hero;
+int hasPill = 0;
 
 
 int whereGhostGoes(int currentX, int currentY, int* destinyX, int* destinyY) {
@@ -95,10 +97,42 @@ void move(char direction) {
     if(!canMove(&m, HERO, nextX, nextY))
         return;
 
+    if(isCharacter(&m, PILL, nextX, nextY)) {
+        hasPill = 1;    
+    }
+
     walksOnMap(&m, hero.x, hero.y, nextX, nextY);
     hero.x = nextX;
     hero.y = nextY;
 }
+
+void explodesPill() {
+
+    if(!hasPill) return;    
+    
+    explodesPill2(hero.x, hero.y,  0,  1, 3);
+    explodesPill2(hero.x, hero.y,  0, -1, 3);
+    explodesPill2(hero.x, hero.y,  1,  0, 3);
+    explodesPill2(hero.x, hero.y, -1,  0, 3);
+
+    hasPill = 0;
+}
+
+void explodesPill2(int x, int y, int addX, int addY, int quantity) {
+    
+    if(quantity == 0) return;
+
+    int newX = x + addX;
+    int newY = y + addY;
+
+    if(!isValid(&m, newX, newY)) return;
+    if(isWall(&m, newX, newY)) return;
+    
+    m.matrix[newX][newY] = EMPTY;
+    explodesPill2(newX, newY, addX, addY, quantity - 1);
+}
+
+
 
 int main() {
 
@@ -112,9 +146,11 @@ int main() {
 		scanf(" %c", &command);
 
 		move(command);
+        if(command == BOMB) explodesPill();
         ghosts();
 	} while(!gameOver());
 
+    printsGameOver();
 	freeMapMemory(&m);
 
 	return 0;
