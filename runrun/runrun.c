@@ -1,91 +1,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "runrun.h"
+#include "map.h"
 
-struct map m;
-
-void freeMapMemory() {
-	for(int i = 0; i < m.lines; i++) {
-		free(m.matrix[i]);
-	}
-	free(m.matrix);
-}
-
-void alocatesMapMemory() {
-	m.matrix = malloc(sizeof(char*) * m.lines);
-	for(int i = 0; i < m.lines; i++) {
-		m.matrix[i] = malloc(sizeof(char) * (m.columns + 1)); // +1 -> room for '\0' at the end of string
-	}
-}
-
-void readsMap() {
-
-	FILE* f;
-	f = fopen("map.txt", "r");
-	if(f == 0) {
-		printf("Error reading the map file\n");
-		exit(1);
-	}
-	
-	fscanf(f, "%d %d", &(m.lines), &(m.columns));
-
-	alocatesMapMemory();
-
-	for(int i = 0; i < m.lines; i++) {
-		fscanf(f, "%s", m.matrix[i]);
-	}
-
-	fclose(f);
-}
-
-void printsMap() {
-	for(int i = 0; i < m.lines; i++) {
-		printf("%s\n", m.matrix[i]);
-	}
-}
+MAP m;
+POSITION hero;
 
 int gameOver() {
 	return 0;
 }
 
 void move(char direction) {
-	int x;
-	int y;
 
-	for(int i = 0; i < m.lines; i++) {
-		for(int j = 0; j < m.columns; j++) {
-			if(m.matrix[i][j] == '@') {
-				x = i;
-				y = j;
-				break;
-			}
-		}
-	}
+    m.matrix[hero.x][hero.y] = '.';
 
 	switch(direction) {
 		case 'a': 
-			m.matrix[x][y-1] = '@';
+			m.matrix[hero.x][hero.y-1] = '@';
+            hero.y--;   
 			break;
 		case 'w':
-			m.matrix[x-1][y] = '@';
-			break;
+			m.matrix[hero.x-1][hero.y] = '@';
+            hero.x--;			
+            break;
 		case 's':
-			m.matrix[x+1][y] = '@';
-			break;
+			m.matrix[hero.x+1][hero.y] = '@';
+            hero.x++;			
+            break;
 		case 'd':
-			m.matrix[x][y+1] = '@';
-			break;
+			m.matrix[hero.x][hero.y+1] = '@';
+            hero.y++;
+   			break;
 	}
 
-	m.matrix[x][y] = '.';
+    
 }
 
 int main() {
 
-	readsMap();
+	readsMap(&m);
+    findsOnMap(&m, &hero, '@');
 	
 	do {
-		printsMap();
+		printsMap(&m);
 
 		char command;
 		scanf(" %c", &command);
@@ -93,7 +50,7 @@ int main() {
 		move(command);
 	} while(!gameOver());
 
-	freeMapMemory();
+	freeMapMemory(&m);
 
 	return 0;
 }
